@@ -31,10 +31,12 @@ async function connectToWhatsApp () {
             const n = m.messages[0]
             console.log("ini n",n.message)
             if (!n.message) return // if there is no text or media message
-            const messageType = Object.keys (n.message)[0]// get what type of message it is -- text, image, video
+            
             // if the message is an image
-            if (messageType === 'viewOnceMessageV2') {
+            if (n.message.viewOnceMessageV2) {
                 // download the message
+                const messageType = Object.keys (n.message.viewOnceMessageV2.message)[0]// get what type of message it is -- text, image, video
+            	console.log(messageType)
                 console.log("Ada data masuk!")
                 const buffer = await downloadMediaMessage(
                     n,
@@ -47,12 +49,19 @@ async function connectToWhatsApp () {
                     }
                 )
                 // save to file
-                await writeFile("./images/"+n.key.remoteJid.replace("@","-")+n.key.id+"mas.jpeg", buffer)
-            }
+                switch(messageType){
+                	case "imageMessage":
+                		await writeFile("./image/"+n.key.remoteJid.replace("@","-")+n.key.id+"mas.jpeg", buffer)
+                		break;
+                	case "videoMessage":
+                		await writeFile("./video/"+n.key.remoteJid.replace("@","-")+n.key.id+"mas.mp4", buffer)
+                		break;
+                }
+          }
         }catch(error){
             console.log("error",error)
         }
-    
+    //console.clear();
     })
 }
 // run in main file
