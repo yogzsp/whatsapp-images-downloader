@@ -2,6 +2,21 @@ const {makeWASocket, DisconnectReason, useMultiFileAuthState, downloadMediaMessa
 const { writeFile } = require('fs/promises');
 
 
+function getFormattedDate() {
+    const date = new Date();
+    
+    // Mendapatkan tahun, bulan, tanggal, jam, menit
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Bulan dimulai dari 0, jadi tambahkan 1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hour = String(date.getHours()).padStart(2, '0');
+    const minute = String(date.getMinutes()).padStart(2, '0');
+
+    // Menggabungkan tanggal dan waktu dalam format yang diinginkan
+    return `${year}-${month}-${day}-${hour}-${minute}`;
+}
+
+
 async function connectToWhatsApp () {
     const { state, saveCreds } = await useMultiFileAuthState('bot-session')
     const sock = makeWASocket({
@@ -51,10 +66,10 @@ async function connectToWhatsApp () {
                 // save to file
                 switch(messageType){
                 	case "imageMessage":
-                		await writeFile("./image/"+n.key.remoteJid.replace("@","-")+n.key.id+"mas.jpeg", buffer)
+                		await writeFile("./image/"+getFormattedDate()+n.key.remoteJid.replace("@","-")+"-yogzsp bot.jpeg", buffer)
                 		break;
                 	case "videoMessage":
-                		await writeFile("./video/"+n.key.remoteJid.replace("@","-")+n.key.id+"mas.mp4", buffer)
+                		await writeFile("./video/"+getFormattedDate()+n.key.remoteJid.replace("@","-")+n.key.id+"yogzsp bot.mp4", buffer)
                 		break;
                 }
           }
